@@ -1,0 +1,6 @@
+Azure
+https://dev.azure.com/endabrody/MyTestProject/_build/results?buildId=10&view=results
+
+Jenkins
+X9iwaa33#
+https://eu-central-1.console.aws.amazon.com/cloudformation/home?region=eu-central-1#/stacks/events?stackId=arn%3Aaws%3Acloudformation%3Aeu-central-1%3A890253689441%3Astack%2FQaJenkins%2Fc25e01c0-701c-11ee-a51a-0a8f62c465ab&filteringText=&filteringStatus=active&viewNested=true
