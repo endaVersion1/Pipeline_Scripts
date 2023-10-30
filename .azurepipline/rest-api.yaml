@@ -17,113 +17,36 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-  - group: lpsamcore_dev_url
   - name: endpointUrl
-    value: https://amsdev-qa.pointer-ni.gov.uk/AMCOREAPI
+    value: https://www.blazingchat.com
   - name: insecureSsl
     value: true
 
-steps:
-
-- task: Bash@3
-  displayName: 'Edit Hosted Agent Hosts File'
-  inputs:
-    targetType: inline
-    failOnStderr: true
-    script: |
-      sudo /bin/sh -c 'echo "$(lpsamcoreqaip) $(lpsamcoreqahostname)" >> /etc/hosts'   
-        cat /etc/hosts 
-
-- task: Bash@3
-  displayName: 'Test URL'
-  inputs:
-        targetType: 'inline'
-        script: 'curl -v --connect-timeout 40 --insecure https://amsdev-qa.pointer-ni.gov.uk/AMCOREAPI'
-        workingDirectory: '$(System.DefaultWorkingDirectory)'
-                   
+steps:                   
 - task: Npm@1
-  displayName: 'Install Newman'
+  displayName: 'Install Playwright'
   inputs:
       command: 'custom'
-      customCommand: 'install newman -g newman-reporter-htmlextra'
+      customCommand: 'npm install '
       
 - task: Bash@3
-  displayName: 'Run Lps AMCore App Postman Collection via Newman'
-  continueOnError: true
+  displayName: Run Playwright tests
   inputs:
-    targetType: 'inline'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/rest-api-testing'
-    script: |
-     newman run rest-api-LpsAmCore-testing.postman_collection.json --env-var "url=%url%" --reporters cli,junit,htmlextra --reporter-junit-export $(System.DefaultWorkingDirectory)/.azurepipeline/testcases/postman/Results/junitReport.xml --reporter-htmlextra-export $(System.DefaultWorkingDirectory)/.azurepipeline/testcases/postman/report/htmlReport.html --delay-request 5000 --insecure
-      
-- task: Bash@3
-  displayName: 'Run Lps AMCore App Data Exchange Postman Collection via Newman'
-  continueOnError: true
-  inputs:
-    targetType: 'inline'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/rest-api-testing'
-    script: |
-     newman run rest-api-LpsAmCore-DataExchange-testing.postman_collection.json --env-var "url=%url%" --reporters cli,junit,htmlextra --reporter-junit-export $(System.DefaultWorkingDirectory)/.azurepipeline/testcases/postman/Results/junitReport.xml --reporter-htmlextra-export $(System.DefaultWorkingDirectory)/.azurepipeline/testcases/postman/report/htmlReport.html --delay-request 500 --insecure
-
-- task: Bash@3
-  displayName: 'Run Lps AMCore App AO Prop Exceptions and Allocation Postman Collection via Newman'
-  continueOnError: true
-  inputs:
-    targetType: 'inline'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/rest-api-testing'
-    script: |
-     newman run rest-api-LpsAmCore-DX-Allocation-AoPropExceptions.postman_collection.json --env-var "url=%url%" --reporters cli,junit,htmlextra --reporter-junit-export $(System.DefaultWorkingDirectory)/.azurepipeline/testcases/postman/Results/junitReport.xml --reporter-htmlextra-export $(System.DefaultWorkingDirectory)/.azurepipeline/testcases/postman/report/htmlReport.html --delay-request 5000 --insecure
-    
-- task: Bash@3
-  displayName: 'Run Lps AMCore Address Search App Postman Collection via Newman'
-  continueOnError: true
-  inputs:
-    targetType: 'inline'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/rest-api-testing'
-    script: |
-     newman run rest-api-LpsAmCore-AddressSearch-testing.postman_collection.json --env-var "url=%url%" --reporters cli,junit,htmlextra --reporter-junit-export $(System.DefaultWorkingDirectory)/.azurepipeline/testcases/postman/Results/junitReport.xml --reporter-htmlextra-export $(System.DefaultWorkingDirectory)/.azurepipeline/testcases/postman/report/htmlReport.html --delay-request 500 --insecure
-
-- task: Bash@3
-  displayName: 'Run Lps AMCore Address Search PAO App Postman Collection via Newman'
-  continueOnError: true
-  inputs:
-    targetType: 'inline'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/rest-api-testing'
-    script: |
-     newman run rest-api-LpsAmCore-AddressSearchPAO-testing.postman_collection.json --env-var "url=%url%" --reporters cli,junit,htmlextra --reporter-junit-export $(System.DefaultWorkingDirectory)/.azurepipeline/testcases/postman/Results/junitReport.xml --reporter-htmlextra-export $(System.DefaultWorkingDirectory)/.azurepipeline/testcases/postman/report/htmlReport.html --delay-request 500 --insecure
-
-- task: Bash@3
-  displayName: 'Run Royal Mail App Postman Collection via Newman'
-  continueOnError: true
-  inputs:
-    targetType: 'inline'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/rest-api-testing'
-    script: |
-     newman run rest-api-RoyalMail-testing.postman_collection.json --env-var "url=%url%" --reporters cli,junit,htmlextra --reporter-junit-export $(System.DefaultWorkingDirectory)/.azurepipeline/testcases/postman/Results/junitReport.xml --reporter-htmlextra-export $(System.DefaultWorkingDirectory)/.azurepipeline/testcases/postman/report/htmlReport.html --delay-request 5000 --insecure
-
-- task: Bash@3
-  displayName: 'Run Local Council App Postman Collection via Newman'
-  continueOnError: true
-  inputs:
-    targetType: 'inline'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/rest-api-testing'
-    script: |
-     newman run rest-api-LocalCouncilApp-testing.postman_collection.json --env-var "url=%url%" --reporters cli,junit,htmlextra --reporter-junit-export $(System.DefaultWorkingDirectory)/.azurepipeline/testcases/postman/Results/junitReport.xml --reporter-htmlextra-export $(System.DefaultWorkingDirectory)/.azurepipeline/testcases/postman/report/htmlReport.html --delay-request 5000 --insecure
-
-- task: Bash@3
-  displayName: 'Run Address Query App Postman Collection via Newman'
-  continueOnError: true
-  inputs:
-    targetType: 'inline'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/rest-api-testing'
-    script: |
-     newman run rest-api-AddressQuery-testing.postman_collection.json --env-var "url=%url%" --reporters cli,junit,htmlextra --reporter-junit-export $(System.DefaultWorkingDirectory)/.azurepipeline/testcases/postman/Results/junitReport.xml --reporter-htmlextra-export $(System.DefaultWorkingDirectory)/.azurepipeline/testcases/postman/report/htmlReport.html --delay-request 5000 --insecure
+          targetType: inline
+          failOnStderr: true
+          env:
+          CI: true
+          script: |
+               npx playwright install && npm run playwright$(appNameTest)-integration-test
 
 - task: PublishTestResults@2
-  displayName: 'Publish Test Results'
+  displayName: 'Playwright Test results'
+  condition: succeededOrFailed()
   inputs:
-    testResultsFiles: '$(System.DefaultWorkingDirectory)/.azurepipeline/testcases/postman/Results/*.xml'
-    testRunTitle: 'API Tests'
+      testRunTitle: DEV_Playwright_TESTS
+      testResultsFormat: JUnit
+      testResultsFiles: '**/*.xml'
+      mergeTestResults: true
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish HTML Report'
